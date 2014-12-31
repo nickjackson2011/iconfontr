@@ -8,8 +8,14 @@
 
 #import <JNWCollectionView.h>
 
+typedef enum {
+    NJMenuCodeCopySVGText = 0,
+    NJMenuCodeCopySVGPath,
+    NJMenuCodeCopyUnicode,
+} NJMenuCode;
+
 @interface IFMagnifyCollectionView : JNWCollectionView
 
-- (NSString *)SVGContentForIndexPath:(NSIndexPath*)indexPath isPathString:(BOOL)isPathString;
+- (NSString *)SVGContentForIndexPath:(NSIndexPath*)indexPath isPathString:(NSInteger)isPathString;
 
 @end

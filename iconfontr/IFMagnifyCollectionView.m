@@ -117,7 +117,7 @@
 
 #pragma mark - Content to save
 
-- (NSString *)SVGContentForIndexPath:(NSIndexPath*)indexPath isPathString:(BOOL)isPathString
+- (NSString *)SVGContentForIndexPath:(NSIndexPath*)indexPath isPathString:(NSInteger)isPathString
 {
   IFCollectionGlyphCell *cell = (IFCollectionGlyphCell *)[self cellForItemAtIndexPath:indexPath];
   
@@ -125,16 +125,39 @@
   NSColor *bgcolor = self.backgroundColor;
   NSString *canvasStyle = [NSString stringWithFormat:@"background:%@", [NSBezierPath SVGColorStringWithColor:bgcolor]];
   NSString *pathStyle = [NSString stringWithFormat:@"fill:%@", [NSBezierPath SVGColorStringWithColor:fgcolor]];
-  
-  if (isPathString) {
-    return [[cell.content bezierPath] SVGPathString];
-  }
-  else {
-    return [[cell.content bezierPath] SVGTextWithWidth:nil
-                                      height:nil
-                                 canvasStyle:canvasStyle
-                                   pathStyle:pathStyle];
-  }
+    
+    NSString *result = @"";
+    switch (isPathString) {
+        case NJMenuCodeCopySVGText:
+        {
+            result = [[cell.content bezierPath] SVGTextWithWidth:nil
+                                                          height:nil
+                                                     canvasStyle:canvasStyle
+                                                       pathStyle:pathStyle];
+        }
+            break;
+        case NJMenuCodeCopySVGPath:
+        {
+            result = [[cell.content bezierPath] SVGPathString];
+        }
+            break;
+        case NJMenuCodeCopyUnicode:
+        {
+            //TODO: 添加返回unicode的代码
+            id<IFIconModel> theCellContent = cell.content;
+            NSString *theUnicode = [theCellContent unicode];
+            const char *theChar = [theUnicode cStringUsingEncoding:NSUnicodeStringEncoding];
+            result = [NSString stringWithFormat:@"\\u%04x", *theChar];
+            NSLog(@"%@", result);
+            NSLog(@"%@", [NSString stringWithFormat:@"\\u%04x", *[theUnicode cStringUsingEncoding:NSUTF8StringEncoding]]);//\ue600
+        }
+            break;
+            
+        default:
+            break;
+    }
+    
+    return result;
 }
 
 @end
