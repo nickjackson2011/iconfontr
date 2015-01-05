@@ -55,6 +55,28 @@
   // cast CGFont back to NSFont
   CTFontRef theCTFont = CTFontCreateWithGraphicsFont(theCGFont, 48, NULL, NULL);
   _font = (__bridge NSFont *) theCTFont;
+    
+    CFIndex myCount = CTFontGetGlyphCount(theCTFont);
+    CFArrayRef myArrayRef = CTFontCopyAvailableTables(theCTFont, kCTFontTableOptionNoOptions);
+    
+    for (int i = 0; i < CFArrayGetCount(myArrayRef); i++) {
+        CTFontTableTag myTag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(myArrayRef, i);
+        CFDataRef myDataRef = CTFontCopyTable(theCTFont, myTag, kCTFontTableOptionNoOptions);
+        NSData *myData = (__bridge NSData *)myDataRef;
+        NSString *myStr = nil;
+        myStr = [[NSString alloc] initWithData:myData encoding:NSUTF16BigEndianStringEncoding];
+        myStr = [[NSString alloc] initWithData:myData encoding:NSUTF32BigEndianStringEncoding];//
+        myStr = [[NSString alloc] initWithData:myData encoding:NSUnicodeStringEncoding];
+    }
+    
+    
+    
+//    CFArrayRef myFeaArrayRef = CTFontCopyFeatures(theCTFont);
+//    CFDictionaryRef myDicRef = CFArrayGetValueAtIndex(myFeaArrayRef, 0);
+    
+//    CFArrayRef myFSettingArrayRef = CTFontCopyFeatureSettings(theCTFont);
+    
+    
   
   // get available glyphs
   NSUInteger glyphCount = [_font numberOfGlyphs];
